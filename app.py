@@ -36,3 +36,13 @@ def createPost(post_data: PostData):
         return {"message": "Post created successfully", "post_id": doc_ref.id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/getPosts")
+def getPosts():
+    docs = db.collection("posts").stream()
+
+    posts = []
+    for doc in docs:
+        posts.append(doc.to_dict())  # Convert Firestore document to dictionary
+    
+    return posts
