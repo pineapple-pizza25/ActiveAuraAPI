@@ -50,7 +50,8 @@ def createPost(post_data: PostData):
 
         notification_body = {
             'headings': {'en': post_data.title},
-            'contents': {'en': post_data.body}
+            'contents': {'en': post_data.body},
+            'included_segments': ["All"]
         }
 
         client.send_notification(notification_body)
@@ -77,7 +78,8 @@ async def createPost(post_data: PostWithImageData):
 
         notification_body = {
             'headings': {'en': post_data.title},
-            'contents': {'en': post_data.body}
+            'contents': {'en': post_data.body},
+            'included_segments': ["All"]
         }
 
         client.send_notification(notification_body)
