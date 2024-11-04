@@ -3,6 +3,11 @@ from fastapi.responses import JSONResponse, FileResponse
 import firebase_admin
 from firebase_admin import credentials, firestore
 from pydantic import BaseModel
+from onesignal_sdk.client import Client
+
+
+ONESIGNAL_APP_ID = 'a6e16b69-2e5c-4b04-bf3d-1b491f6a6844'
+ONESIGNAL_API_KEY = 'NjQyMTc5ZmQtZDMxNC00MjhjLTk4MmItMTU5ZjE5MzNiNTE3'
 
 
 cred = credentials.Certificate("./service-account.json")
@@ -23,7 +28,7 @@ class PostWithImageData(BaseModel):
     date: str
     title: str
     body: str
-    imageBitmap: str  # New field for the base64 image
+    imageBitmap: str 
 
 
 @app.get("/")
@@ -41,6 +46,14 @@ def createPost(post_data: PostData):
             "title": post_data.title,
             "body": post_data.body
         })
+        client = Client(app_id=ONESIGNAL_APP_ID, rest_api_key=ONESIGNAL_API_KEY)
+
+        notification_body = {
+            'headings': {'en': post_data.title},
+            'contents': {'en': post_data.body}
+        }
+
+        client.send_notification(notification_body)
         return {"message": "Post created successfully", "post_id": doc_ref.id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -72,6 +85,6 @@ def getPosts():
 
     posts = []
     for doc in docs:
-        posts.append(doc.to_dict())  # Convert Firestore document to dictionary
+        posts.append(doc.to_dict()) 
     
     return posts
