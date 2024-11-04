@@ -73,6 +73,15 @@ async def createPost(post_data: PostWithImageData):
             "image": post_data.imageBitmap   
         })
 
+        client = Client(app_id=ONESIGNAL_APP_ID, rest_api_key=ONESIGNAL_API_KEY)
+
+        notification_body = {
+            'headings': {'en': post_data.title},
+            'contents': {'en': post_data.body}
+        }
+
+        client.send_notification(notification_body)
+
         return {"message": "Post created successfully", "post_id": post_ref.id}
 
     except Exception as e:
